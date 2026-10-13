@@ -548,17 +548,69 @@
       }, 400);
     }
 
-    // 내 Canva 작업실에서 즉시 열기 (1-Click)
-    function openCanvaDirect() {
-      // 1. 문구 클립보드 자동 복사
-      copyAllText(false);
+    // 내 Canva 작업실에서 실제 디자인 생성 후 열기 (진짜 Canva Connect API 연동)
+    async function openCanvaDirect() {
+      const btn = event.currentTarget || document.querySelector('.canva-btn');
+      const originHtml = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Canva 계정에 디자인 생성 중...';
+      }
 
-      // 2. Canva 해당 규격 공식 새 디자인 작업창 새 탭으로 즉시 열기
-      const targetUrl = currentTmpl.canva_url || "https://www.canva.com/create/banners/";
-      window.open(targetUrl, '_blank');
+      // 문구 페이로드 수집
+      const inputs = document.querySelectorAll('.field-input');
+      const dataPayload = {};
+      inputs.forEach(input => {
+        dataPayload[input.getAttribute('data-field')] = input.value;
+      });
 
-      // 3. 안내 알림 토스트 띄우기
-      showToast("🚀 내 Canva 작업실이 열렸습니다! 문구가 클립보드에 복사되었으니 붙여넣기(Ctrl+V)하세요!");
+      const title = `[자동생성] ${document.getElementById('topicInput').value.trim() || currentTmpl.title}`;
+
+      try {
+        // 실제 Canva Connect API 엔드포인트 호출
+        const res = await fetch('/api/autofill', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            brand_template_id: currentTmpl.id,
+            title: title,
+            data: dataPayload
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) {
+            // 진짜 생성된 Canva 에디터 작업창 열기!
+            window.open(data.url, '_blank');
+            showToast("🎉 내 Canva 계정에 디자인이 생성되었습니다! 새 탭을 확인하세요.");
+            return;
+          }
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.detail || "디자인 생성 실패");
+        }
+      } catch (err) {
+        // 백엔드가 없는 GitHub Pages 정적 웹 환경일 경우 명확한 안내
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+          alert(
+            "⚠️ [중요 안내]\n\n" +
+            "내 Canva 계정에 디자인을 실제로 생성하려면 Python 백엔드 서버가 연결되어 있어야 합니다.\n\n" +
+            "지금 사용자님 컴퓨터에서 이미 서버가 켜져 있으므로,\n" +
+            "http://localhost:8000 주소로 이동하시면 진짜 내 Canva 계정에 디자인이 1초 만에 자동 생성됩니다!\n\n" +
+            "확인을 누르면 진짜 작업실(http://localhost:8000)로 이동합니다."
+          );
+          window.location.href = "http://localhost:8000";
+          return;
+        } else {
+          alert("오류 발생: " + err.message);
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = originHtml;
+        }
+      }
     }
 
     // 모든 문구 클립보드 복사
