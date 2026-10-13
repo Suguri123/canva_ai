@@ -36,6 +36,20 @@
   </header>
 
   <main class="max-w-6xl mx-auto px-6 py-8">
+    <!-- Local Server 안내 배너 (GitHub Pages 접속 시 표시) -->
+    <div id="githubPagesAlert" class="hidden p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+      <div class="flex items-center space-x-3 text-sm">
+        <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg"></i>
+        <div>
+          <span class="font-bold">현재 화면은 GitHub Pages (정적 미리보기) 모드입니다.</span>
+          <p class="text-xs text-amber-800 mt-0.5">내 Canva 계정에 직접 디자인을 1초 만에 자동 생성하려면 로컬 서버 주소로 접속해 주세요.</p>
+        </div>
+      </div>
+      <a href="http://localhost:8000" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition flex items-center shrink-0 shadow">
+        <i class="fa-solid fa-bolt mr-1.5"></i>내 로컬 서버(http://localhost:8000) 열기
+      </a>
+    </div>
+
     <!-- Intro Banner -->
     <div class="p-6 rounded-2xl canva-gradient text-white mb-8 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between">
       <div>
@@ -282,7 +296,7 @@
         title: "🍊 1. [인스타] 감성 매거진 카드뉴스 (1080x1080)",
         width: 1080,
         height: 1080,
-        canva_search: "제주 감성 카드뉴스",
+        canva_search: "인스타그램 게시물",
         default_topic: "제주 산지직송 당일 수확 햇감귤 이야기",
         dataset: {
           headline: { type: "text", description: "메인 헤드라인" },
@@ -296,7 +310,7 @@
         title: "🎬 2. [유튜브] 맛집/여행 썸네일 (1280x720)",
         width: 1280,
         height: 720,
-        canva_search: "유튜브 썸네일 맛집",
+        canva_search: "유튜브 썸네일",
         default_topic: "제주도민이 꼽은 숨은 귤맛집 지도 BEST 5",
         dataset: {
           headline: { type: "text", description: "시선 강탈 메인 타이틀" },
@@ -310,7 +324,7 @@
         title: "🏷️ 3. [프로모션] 비비드 팝 할인 배너 (1200x628)",
         width: 1200,
         height: 628,
-        canva_search: "할인 프로모션 배너",
+        canva_search: "웹 배너",
         default_topic: "2026 귤시즌 개막 기념 전 품목 30% 특별 할인전",
         dataset: {
           headline: { type: "text", description: "파격 세일 타이틀" },
@@ -324,7 +338,7 @@
         title: "📱 4. [쇼츠/스토리] 숏폼 홍보 템플릿 (1080x1920)",
         width: 1080,
         height: 1920,
-        canva_search: "인스타그램 스토리 이벤트",
+        canva_search: "인스타그램 스토리",
         default_topic: "제주 감귤 농장 브이로그 & 깜짝 퀴즈 이벤트",
         dataset: {
           headline: { type: "text", description: "스토리 핵심 제목" },
@@ -340,6 +354,10 @@
     let localTemplates = [...FALLBACK_PRESETS];
 
     window.addEventListener('DOMContentLoaded', () => {
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        const alertEl = document.getElementById('githubPagesAlert');
+        if (alertEl) alertEl.classList.remove('hidden');
+      }
       checkAuthStatus();
       loadBrandTemplates();
     });
@@ -370,6 +388,7 @@
           }
         }
       } catch (err) {
+        // 정적 웹사이트(GitHub Pages)일 때 안내
         console.log("Running in static GitHub Pages mode");
       }
     }
@@ -408,7 +427,9 @@
           const data = await res.json();
           items = data.items || [];
         }
-      } catch (err) {}
+      } catch (err) {
+        // API 서버가 없을 때 Fallback 기본 템플릿 사용
+      }
 
       if (items.length === 0) {
         items = localTemplates;
@@ -542,7 +563,7 @@
 
       // Fallback: 클라이언트 스마트 생성기 (정적 웹 환경 지원)
       if (!aiResult) {
-        await new Promise(r => setTimeout(r, 600));
+        await new Promise(r => setTimeout(r, 600)); // 자연스러운 생성 딜레이
         aiResult = generateSmartSampleTexts(topic, currentTemplateDataset);
       }
 
