@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
@@ -11,6 +12,13 @@ from canva_api import CanvaClient, CanvaAPIError
 from ai_service import AIService
 
 app = FastAPI(title="Canva AI Automation Studio")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 canva = CanvaClient()
 
 # 정적 파일 경로
