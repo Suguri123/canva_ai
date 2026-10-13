@@ -1,0 +1,26 @@
+[
+  {
+    "id": "custom_1",
+    "is_preset": false,
+    "is_custom": true,
+    "title": "⭐ [내 템플릿] 유튜브 썸네일",
+    "brand_template_id": "",
+    "type": "custom",
+    "width": 1080,
+    "height": 1080,
+    "fields": {
+      "headline": {
+        "type": "text",
+        "description": "headline"
+      },
+      "subheadline": {
+        "type": "text",
+        "description": "subheadline"
+      },
+      "cta_text": {
+        "type": "text",
+        "description": "cta_text"
+      }
+    }
+  }
+]
