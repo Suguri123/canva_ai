@@ -289,7 +289,7 @@
   </div>
 
   <script>
-    // 기본 내장 프리셋 목록 (정적 GitHub Pages 웹사이트에서도 완벽 구동)
+    // 기본 내장 프리셋 목록 (로컬 서버의 10개 프리셋 전체를 포함하여 완벽 일치)
     const FALLBACK_PRESETS = [
       {
         id: "tmpl_01_magazine_card",
@@ -335,16 +335,113 @@
       },
       {
         id: "tmpl_04_story_shorts",
-        title: "📱 4. [쇼츠/스토리] 숏폼 홍보 템플릿 (1080x1920)",
+        title: "📱 4. [쇼츠/스토리] 풀스크린 세로형 배너 (1080x1920)",
         width: 1080,
         height: 1920,
         canva_search: "인스타그램 스토리",
-        default_topic: "제주 감귤 농장 브이로그 & 깜짝 퀴즈 이벤트",
+        default_topic: "지금 주문하면 오늘 바로 따서 보내드려요!",
         dataset: {
-          headline: { type: "text", description: "스토리 핵심 제목" },
-          subheadline: { type: "text", description: "참여 방법 및 안내" },
-          badge_text: { type: "text", description: "D-DAY 또는 이벤트 뱃지" },
-          cta_text: { type: "text", description: "아래 링크를 확인하세요!" }
+          headline: { type: "text", description: "세로형 임팩트 타이틀" },
+          subheadline: { type: "text", description: "신선도 / 배송 안내" },
+          badge_text: { type: "text", description: "상단 태그 (예: 당일수확 산지직송)" },
+          cta_text: { type: "text", description: "위로 올려 바로보기" }
+        }
+      },
+      {
+        id: "tmpl_05_ranking_list",
+        title: "🗺️ 5. [정보공유] 인포그래픽 BEST 5 순위형 (1080x1350)",
+        width: 1080,
+        height: 1350,
+        canva_search: "리스트 카드뉴스 BEST",
+        default_topic: "실패 없는 제주 농장 직송 감귤 품종 BEST 5 가이드",
+        dataset: {
+          headline: { type: "text", description: "정보형 메인 타이틀" },
+          subheadline: { type: "text", description: "핵심 큐레이션 안내" },
+          badge_text: { type: "text", description: "랭킹 뱃지 (예: 2026 추천 가이드)" },
+          cta_text: { type: "text", description: "자세히 알아보기" }
+        }
+      },
+      {
+        id: "tmpl_06_organic_natural",
+        title: "🌿 6. [오가닉] 내추럴 친환경 농산물 포스터 (1080x1440)",
+        width: 1080,
+        height: 1440,
+        canva_search: "유기농 포스터",
+        default_topic: "자연을 담은 무농약 친환경 제주 타이벡 감귤",
+        dataset: {
+          headline: { type: "text", description: "신뢰감 있는 메인 타이틀" },
+          subheadline: { type: "text", description: "친환경 재배 철학 설명" },
+          badge_text: { type: "text", description: "인증 뱃지 (예: 100% 무농약 인증)" },
+          cta_text: { type: "text", description: "농장 직송 구경하기" }
+        }
+      },
+      {
+        id: "tmpl_07_timesale_urgency",
+        title: "⚡ 7. [타임세일] 한정수량 마감 임박 배너 (1200x628)",
+        width: 1200,
+        height: 628,
+        canva_search: "타임세일 배너",
+        default_topic: "오늘 자정 마감! 당일 수확 한정 100박스 타임세일",
+        dataset: {
+          headline: { type: "text", description: "긴급 타임세일 헤드라인" },
+          badge_text: { type: "text", description: "한정수량 (예: 선착순 100박스)" },
+          subheadline: { type: "text", description: "마감 임박 혜택 안내" },
+          cta_text: { type: "text", description: "품절 전 서두르기" }
+        }
+      },
+      {
+        id: "tmpl_08_review_proof",
+        title: "⭐ 8. [리뷰인증] 고객 찐후기 추천 카드뉴스 (1080x1080)",
+        width: 1080,
+        height: 1080,
+        canva_search: "고객 후기 카드뉴스",
+        default_topic: "별점 5.0 만점! 벌써 3번째 재구매하는 꿀당도 감귤 후기",
+        dataset: {
+          headline: { type: "text", description: "고객 실제 생생 후기" },
+          badge_text: { type: "text", description: "평점 뱃지 (예: ★★★★★ 만점 리뷰)" },
+          subheadline: { type: "text", description: "재구매율 98% 인증 설명"},
+          cta_text: { type: "text", description: "리뷰 1,200개 더보기" }
+        }
+      },
+      {
+        id: "tmpl_09_premium_gift",
+        title: "🎁 9. [선물세트] 프리미엄 명절 기프트 배너 (1080x1080)",
+        width: 1080,
+        height: 1080,
+        canva_search: "선물세트 기획전",
+        default_topic: "소중한 분께 전하는 최고급 제주 프리미엄 황금향 선물세트",
+        dataset: {
+          headline: { type: "text", description: "격식 있는 명절 선물 헤드라인" },
+          badge_text: { type: "text", description: "프리미엄 뱃지 (예: PREMIUM GIFT)" },
+          subheadline: { type: "text", description: "고급 보자기 포장 & 무료배송" },
+          cta_text: { type: "text", description: "선물세트 예약하기" }
+        }
+      },
+      {
+        id: "tmpl_10_cafe_menu",
+        title: "☕ 10. [카페/디저트] 감성 시즌 메뉴 포스터 (1080x1440)",
+        width: 1080,
+        height: 1440,
+        canva_search: "카페 시즌 메뉴 포스터",
+        default_topic: "겨울 한정 제주 생귤 에이드 & 수제 귤 타르트 출시",
+        dataset: {
+          headline: { type: "text", description: "시즌 신메뉴 타이틀" },
+          badge_text: { type: "text", description: "시즌 한정 (예: WINTER SPECIAL)" },
+          subheadline: { type: "text", description: "메뉴 맛과 특징 소개" },
+          cta_text: { type: "text", description: "매장에서 바로 맛보기" }
+        }
+      },
+      {
+        id: "custom_1",
+        title: "⭐ [내 템플릿] 유튜브 썸네일 (1080x1080)",
+        width: 1080,
+        height: 1080,
+        canva_search: "유튜브 썸네일",
+        default_topic: "인기 유튜브 영상 맞춤 썸네일 제작",
+        dataset: {
+          headline: { type: "text", description: "headline" },
+          subheadline: { type: "text", description: "subheadline" },
+          cta_text: { type: "text", description: "cta_text" }
         }
       }
     ];
