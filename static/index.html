@@ -70,6 +70,22 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       <!-- Left Column: Controls (5 cols) -->
       <div class="lg:col-span-5 space-y-6">
+        <!-- 계정 연동 및 전환 바 -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+              <i class="fa-solid fa-user-shield text-base"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-800 block" id="authAccountText">Canva 계정 확인 중...</span>
+              <p class="text-[11px] text-slate-500">다른 Canva 계정으로 생성하려면 전환하세요</p>
+            </div>
+          </div>
+          <button onclick="handleSwitchAccount()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition flex items-center">
+            <i class="fa-solid fa-arrows-rotate mr-1 text-slate-500"></i>계정 전환
+          </button>
+        </div>
+
         <!-- Step 1: 템플릿 선택 -->
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between mb-3">
@@ -421,7 +437,41 @@
     window.addEventListener('DOMContentLoaded', () => {
       initTemplateSelect();
       loadTemplate(TEMPLATES[0].id);
+      checkAuthUser();
     });
+
+    async function checkAuthUser() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        const el = document.getElementById('authAccountText');
+        if (data.connected && data.user && data.user.team_user) {
+          el.innerHTML = `연동 계정 ID: <span class="font-mono text-emerald-700">${data.user.team_user.user_id.substring(0, 10)}...</span> (정상 연동됨)`;
+        } else if (data.connected) {
+          el.textContent = "Canva 정상 연동됨";
+        } else {
+          el.textContent = "Canva 계정 미연동 상태 (로그인 필요)";
+        }
+      } catch (e) {
+        const el = document.getElementById('authAccountText');
+        if (el) el.textContent = "온라인 데모 모드 (로컬 서버 미연결)";
+      }
+    }
+
+    async function handleSwitchAccount() {
+      if (confirm("현재 연동된 Canva 계정을 해제하고, 다른 Canva 계정으로 다시 연동하시겠습니까?\n\n(확인을 누르면 Canva 로그인 승인 페이지로 이동합니다)")) {
+        try {
+          await fetch('/api/auth/logout', { method: 'POST' });
+          const res = await fetch('/api/auth/url');
+          const data = await res.json();
+          if (data.url) {
+            window.location.href = data.url;
+          }
+        } catch (e) {
+          alert("서버 연결 오류: " + e.message);
+        }
+      }
+    }
 
     // 템플릿 드롭다운 채우기
     function initTemplateSelect() {
